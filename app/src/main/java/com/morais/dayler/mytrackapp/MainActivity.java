@@ -1,6 +1,7 @@
 package com.morais.dayler.mytrackapp;
 
 import android.app.FragmentManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -13,54 +14,78 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements GPSCallback {
     private GoogleMap googleMap;
     private int mapType = GoogleMap.MAP_TYPE_NORMAL;
+    private GPSManager gpsManager = null;
+    double auxLat, auxLng;
+    LatLng auxLatLng;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        gpsManager = new GPSManager();
+        gpsManager.startListening(getApplicationContext());
+        gpsManager.setGPSCallback(this);
+
         FragmentManager fragmentManager = getFragmentManager();
         MapFragment mapFragment =  (MapFragment) fragmentManager.findFragmentById(R.id.map);
         googleMap = mapFragment.getMap();
 
-        LatLng sfLatLng = new LatLng(37.7750, -122.4183);
-        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        googleMap.addMarker(new MarkerOptions()
-                .position(sfLatLng)
-                .title("San Francisco")
-                .snippet("Population: 776733")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        //LatLng sfLatLng = new LatLng(37.7750, -122.4183);
+        //googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        //googleMap.addMarker(new MarkerOptions()
+        //        .position(sfLatLng)
+        //        .title("San Francisco")
+        //        .snippet("Population: 776733")
+        //        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
-        LatLng sLatLng = new LatLng(37.857236, -122.486916);
-        googleMap.addMarker(new MarkerOptions()
-                .position(sLatLng)
-                .title("Sausalito")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+        //LatLng sLatLng = new LatLng(37.857236, -122.486916);
+        //googleMap.addMarker(new MarkerOptions()
+        //        .position(sLatLng)
+        //        .title("Sausalito")
+        //        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
 
 
         googleMap.getUiSettings().setCompassEnabled(true);
         googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
 
-        LatLng cameraLatLng = sfLatLng;
-        float cameraZoom = 10;
+        //LatLng cameraLatLng = sfLatLng;
+        //float cameraZoom = 10;
 
         if(savedInstanceState != null){
             mapType = savedInstanceState.getInt("map_type", GoogleMap.MAP_TYPE_NORMAL);
 
             double savedLat = savedInstanceState.getDouble("lat");
             double savedLng = savedInstanceState.getDouble("lng");
-            cameraLatLng = new LatLng(savedLat, savedLng);
+            //cameraLatLng = new LatLng(savedLat, savedLng);
 
-            cameraZoom = savedInstanceState.getFloat("zoom", 10);
+            //cameraZoom = savedInstanceState.getFloat("zoom", 10);
         }
 
         googleMap.setMapType(mapType);
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(cameraLatLng, cameraZoom));
+        //googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(cameraLatLng, cameraZoom));
     }
+
+    @Override
+    public void onGPSUpdate(Location location)
+    {
+        auxLat = location.getLatitude();
+        auxLng = location.getLongitude();
+
+        auxLatLng = new LatLng(auxLat, auxLng);
+        googleMap.addMarker(new MarkerOptions()
+                .position(auxLatLng)
+                .title("Estou Aqui")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(auxLatLng, 10));
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
