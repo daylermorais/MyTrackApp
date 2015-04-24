@@ -20,6 +20,7 @@ public class MainActivity extends ActionBarActivity implements GPSCallback {
     private GPSManager gpsManager = null;
     double auxLat, auxLng;
     LatLng auxLatLng;
+    float cameraZoom;
 
 
     @Override
@@ -55,7 +56,7 @@ public class MainActivity extends ActionBarActivity implements GPSCallback {
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
 
         //LatLng cameraLatLng = sfLatLng;
-        //float cameraZoom = 10;
+        cameraZoom = 20;
 
         if(savedInstanceState != null){
             mapType = savedInstanceState.getInt("map_type", GoogleMap.MAP_TYPE_NORMAL);
@@ -82,7 +83,7 @@ public class MainActivity extends ActionBarActivity implements GPSCallback {
                 .position(auxLatLng)
                 .title("Estou Aqui")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(auxLatLng, 10));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(auxLatLng, cameraZoom));
 
     }
 
