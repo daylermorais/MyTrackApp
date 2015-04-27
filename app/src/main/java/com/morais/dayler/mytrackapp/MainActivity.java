@@ -10,9 +10,10 @@ import android.view.MenuItem;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity implements GPSCallback {
     private GoogleMap googleMap;
@@ -21,12 +22,15 @@ public class MainActivity extends ActionBarActivity implements GPSCallback {
     double auxLat, auxLng;
     LatLng auxLatLng;
     float cameraZoom;
+    ArrayList<LatLng> points;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        points = new ArrayList<LatLng>();
 
         gpsManager = new GPSManager();
         gpsManager.startListening(getApplicationContext());
@@ -56,7 +60,7 @@ public class MainActivity extends ActionBarActivity implements GPSCallback {
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
 
         //LatLng cameraLatLng = sfLatLng;
-        cameraZoom = 20;
+        cameraZoom = 15;
 
         if(savedInstanceState != null){
             mapType = savedInstanceState.getInt("map_type", GoogleMap.MAP_TYPE_NORMAL);
@@ -79,10 +83,16 @@ public class MainActivity extends ActionBarActivity implements GPSCallback {
         auxLng = location.getLongitude();
 
         auxLatLng = new LatLng(auxLat, auxLng);
-        googleMap.addMarker(new MarkerOptions()
-                .position(auxLatLng)
-                .title("Estou Aqui")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+        //googleMap.addMarker(new MarkerOptions()
+        //        .position(auxLatLng)
+        //        .title("Estou Aqui")
+        //        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+
+        PolylineOptions polylineOptions = new PolylineOptions();
+        polylineOptions.width(10);
+        points.add(auxLatLng);
+        polylineOptions.addAll(points);
+        googleMap.addPolyline(polylineOptions);
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(auxLatLng, cameraZoom));
 
     }
