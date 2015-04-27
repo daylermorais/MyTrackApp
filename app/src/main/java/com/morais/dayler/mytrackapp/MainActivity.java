@@ -93,6 +93,7 @@ public class MainActivity extends ActionBarActivity implements GPSCallback {
         points.add(auxLatLng);
         polylineOptions.addAll(points);
         googleMap.addPolyline(polylineOptions);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(auxLatLng));
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(auxLatLng, cameraZoom));
 
     }
